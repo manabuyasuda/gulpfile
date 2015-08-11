@@ -2,6 +2,7 @@ var gulp = require('gulp');
 var sass = require('gulp-sass');
 var sourcemaps = require('gulp-sourcemaps');
 var autoprefixer = require('gulp-autoprefixer');
+var csscomb = require('gulp-csscomb');
 var browserSync = require('browser-sync');
 var cssmin = require('gulp-cssmin');
 var rename = require('gulp-rename');
@@ -9,7 +10,7 @@ var rename = require('gulp-rename');
 var paths = {
   'rootDir': './source',
   'htmlSrc': 'source/*.html',
-  'scssDir': 'source/scss/*.scss',
+  'scssSrc': 'source/scss/*.scss',
   'cssSrc': 'source/css',
   'distDir': 'source/dist'
 };
@@ -27,12 +28,13 @@ gulp.task('bs-reload', function () {
 });
 
 gulp.task('sass', function() {
-  return gulp.src(paths.scssDir)
+  return gulp.src(paths.scssSrc)
   .pipe(sass().on('error', sass.logError))
   .pipe(autoprefixer({
     browsers: ['last 2 versions'],
   }))
-  .pipe(sass({outputStyle: 'expanded'}))
+  .pipe(sass())
+  .pipe(csscomb())
   .pipe(sourcemaps.init())
   .pipe(sourcemaps.write())
   .pipe(gulp.dest(paths.cssSrc))
@@ -40,16 +42,17 @@ gulp.task('sass', function() {
 });
 
 gulp.task('default', ['sass', 'browser-sync'], function() {
-  gulp.watch(paths.scssDir, ['sass']);
+  gulp.watch(paths.scssSrc, ['sass']);
   gulp.watch(paths.htmlSrc, ['bs-reload']);
 });
 
 gulp.task('cssmin', function() {
-  return gulp.src(paths.scssDir)
+  return gulp.src(paths.scssSrc)
   .pipe(autoprefixer({
     browsers: ['last 2 versions'],
   }))
-  .pipe(sass({outputStyle: 'expanded'}))
+  .pipe(sass())
+  .pipe(csscomb())
   .pipe(sourcemaps.init())
   .pipe(sourcemaps.write())
   .pipe(gulp.dest(paths.distDir + '/css'))
