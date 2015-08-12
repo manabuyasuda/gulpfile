@@ -3,9 +3,9 @@ var sass = require('gulp-sass');
 var sourcemaps = require('gulp-sourcemaps');
 var autoprefixer = require('gulp-autoprefixer');
 var csscomb = require('gulp-csscomb');
-var browserSync = require('browser-sync');
-var cssmin = require('gulp-cssmin');
+var minifyCss = require('gulp-minify-css');
 var rename = require('gulp-rename');
+var browserSync = require('browser-sync');
 
 var paths = {
   'rootDir': './source',
@@ -46,7 +46,7 @@ gulp.task('default', ['sass', 'browser-sync'], function() {
   gulp.watch(paths.htmlSrc, ['bs-reload']);
 });
 
-gulp.task('cssmin', function() {
+gulp.task('minify-css', function() {
   return gulp.src(paths.scssSrc)
   .pipe(autoprefixer({
     browsers: ['last 2 versions'],
@@ -56,7 +56,7 @@ gulp.task('cssmin', function() {
   .pipe(sourcemaps.init())
   .pipe(sourcemaps.write())
   .pipe(gulp.dest(paths.distDir + '/css'))
-  .pipe(cssmin())
+  .pipe(minifyCss())
   .pipe(rename({suffix: '.min'}))
   .pipe(gulp.dest(paths.distDir + '/css'));
 });
