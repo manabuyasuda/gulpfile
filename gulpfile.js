@@ -35,7 +35,7 @@ var build = {
  * jadeをhtmlにコンパイル。
  */
 gulp.task('jade', function() {
-  gulp.src([source.jade + '*.jade', '!' + source.jade + '_*.jade'])
+  return gulp.src([source.jade + '*.jade', '!' + source.jade + '_*.jade'])
   .pipe(plumber({errorHandler: notify.onError("Error: <%= error.message %>")}))
   .pipe(jade({
     pretty: true
