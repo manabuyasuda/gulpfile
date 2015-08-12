@@ -36,7 +36,7 @@ var build = {
 }
 
 /**
- * jadeをhtmlにコンパイル。
+ * jadeをhtmlにコンパイルします。
  */
 gulp.task('jade', function() {
   return gulp.src([source.jade + '*.jade', '!' + source.jade + '_*.jade'])
@@ -49,8 +49,7 @@ gulp.task('jade', function() {
 });
 
 /**
- * .scssを.cssにコンパイル。
- * 圧縮する場合は`gulp css-minify`を実行します。
+ * .scssを.cssに圧縮してコンパイルします。
  */
 gulp.task('sass', function(){
   return gulp.src(source.sass)
@@ -62,13 +61,15 @@ gulp.task('sass', function(){
     }))
     .pipe(sass())
     .pipe(csscomb())
+    .pipe(rename({suffix: '.min'}))
+    .pipe(minifyCss())
     .pipe(sourcemaps.write())
     .pipe(gulp.dest(build.css))
     .pipe(browserSync.reload({stream: true}));
 });
 
 /**
- * source/asset/javascripts内のjsファイルを
+ * source/asset/js内のjsファイルを
  * 圧縮してから結合します。
  */
 gulp.task('js', function() {
@@ -83,7 +84,7 @@ gulp.task('js', function() {
 });
 
 /**
- * ローカルサーバーの起動後、各ファイルの監視をする。
+ * ローカルサーバーの起動後、各ファイルの監視をします。
  */
 gulp.task('browser-sync', function() {
   browserSync({
@@ -105,16 +106,4 @@ gulp.task('watch', function() {
     ['jade', 'sass', 'js'],
     'browser-sync'
   );
-});
-
-/**
- * コンパイルしているCSSファイルを圧縮（コピー）して.minを付与する。
- */
-gulp.task('css-minify', function(){
-  return gulp.src(build.css + '/*.css')
-    .pipe(sourcemaps.init())
-    .pipe(rename({suffix: '.min'}))
-    .pipe(minifyCss())
-    .pipe(sourcemaps.write())
-    .pipe(gulp.dest(build.css));
 });
