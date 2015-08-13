@@ -99,7 +99,7 @@ gulp.task('browser-sync', function() {
 
 
 /**
- * jade, sassのコンパイルの監視とライブリロード。
+ * jade, sass, jsのタスクを処理しながらライブリロード。
  */
 gulp.task('watch', function() {
   runSequence(
