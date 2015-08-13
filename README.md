@@ -10,6 +10,12 @@ SassとJadeのコンパイルと圧縮、JavaScriptの圧縮とファイルの�
 gulp watch
 ```
 
+cssとjsを圧縮する場合は`minify`を実行します。
+
+```bash
+gulp minify
+```
+
 ## CSS
 CSSでできることは以下の通りです。
 
@@ -17,6 +23,7 @@ CSSでできることは以下の通りです。
 * source mapの出力
 * ベンダープレフィックスの自動付与
 * csscombで整形と宣言の順番を変更
+* cssファイルの圧縮
 
 ## HTML
 HTMLでできることは以下の通りです。
@@ -29,3 +36,8 @@ JavaScriptでできることは以下の通りです。
 * source mapの出力
 * jsディレクトリ内の.jsファイルを圧縮
 * jsディレクトリ内の.jsファイルを結合
+
+## Helper
+コンパイルと圧縮以外のタスク。
+
+* stylestatsでcssファイルの解析（`.json`として出力）

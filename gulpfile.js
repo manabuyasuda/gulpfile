@@ -13,7 +13,7 @@ var minifyCss = require('gulp-minify-css');
 var rename = require('gulp-rename');
 var browserSync = require('browser-sync');
 var runSequence = require('run-sequence');
-
+var stylestats = require('gulp-stylestats');
 
 /**
  * コンパイル前のソースへのパス。
@@ -22,7 +22,8 @@ var source = {
   'root': 'source/',
   'jade': 'source/**/',
   'sass': 'source/asset/sass/*.scss',
-  'js': 'source/asset/js/**/*.js'
+  'js': 'source/asset/js/**/*.js',
+  'stylestats': 'build/css/*.css'
 }
 
 /**
@@ -32,7 +33,8 @@ var build = {
   'root': 'build/',
   'html': 'build/',
   'css': 'build/css/',
-  'js': 'build/js/'
+  'js': 'build/js/',
+  'stylestats': 'build/css/stylestats'
 }
 
 /**
@@ -61,8 +63,6 @@ gulp.task('sass', function(){
     }))
     .pipe(sass())
     .pipe(csscomb())
-    .pipe(rename({suffix: '.min'}))
-    .pipe(minifyCss())
     .pipe(sourcemaps.write())
     .pipe(gulp.dest(build.css))
     .pipe(browserSync.reload({stream: true}));
@@ -76,11 +76,48 @@ gulp.task('js', function() {
   return gulp.src(source.js)
     .pipe(sourcemaps.init())
     .pipe(plumber({errorHandler: notify.onError("Error: <%= error.message %>")}))
-    .pipe(uglify({preserveComments: 'some'}))
-    .pipe(concat('script.min.js'))
+    // .pipe(uglify({preserveComments: 'some'}))
+    .pipe(concat('script.js'))
     .pipe(sourcemaps.write())
     .pipe(gulp.dest(build.js))
     .pipe(browserSync.reload({stream: true}));
+});
+
+/**
+ * cssを圧縮します。
+ */
+ gulp.task('minify-css', function() {
+  return gulp.src(build.css + '*.css')
+    .pipe(sourcemaps.init())
+    .pipe(rename({suffix: '.min'}))
+    .pipe(minifyCss())
+    .pipe(sourcemaps.write())
+    .pipe(gulp.dest(build.css));
+ });
+
+ /**
+ * jsを圧縮します。
+ */
+ gulp.task('minify-js', function() {
+  return gulp.src(build.js + '*.js')
+    .pipe(sourcemaps.init())
+    .pipe(uglify({preserveComments: 'some'}))
+    .pipe(concat('script.min.js'))
+    .pipe(sourcemaps.write())
+    .pipe(gulp.dest(build.js));
+});
+
+/**
+ * stylestatsでCSSをチェックします。
+ * css/stylestats/ ディレクトリに.jsonとして出力されます。
+ */
+gulp.task('stylestats', function() {
+  return gulp.src(source.stylestats)
+    .pipe(stylestats({
+      type: 'json',
+      outfile: true
+    }))
+    .pipe(gulp.dest(build.stylestats));
 });
 
 /**
@@ -95,6 +132,7 @@ gulp.task('browser-sync', function() {
   gulp.watch(source.jade + '*.jade', ['jade']);
   gulp.watch(source.sass, ['sass']);
   gulp.watch(source.js, ['js']);
+  gulp.watch(build.css + '*.css', ['stylestats']);
 });
 
 
@@ -103,7 +141,17 @@ gulp.task('browser-sync', function() {
  */
 gulp.task('watch', function() {
   runSequence(
-    ['jade', 'sass', 'js'],
-    'browser-sync'
+    ['jade', 'sass', 'js', 'stylestats'],
+    'browser-sync',
+  );
+});
+
+ /**
+ * cssとjsを圧縮する
+ */
+gulp.task('minify', function() {
+  runSequence(
+    'minify-css',
+    'minify-js'
   );
 });
