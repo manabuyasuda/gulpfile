@@ -21,7 +21,7 @@ var stylestats = require('gulp-stylestats');
 var source = {
   'root': 'source/',
   'jade': 'source/**/',
-  'sass': 'source/asset/sass/*.scss',
+  'sass': 'source/asset/sass/**/*.scss',
   'js': 'source/asset/js/**/*.js',
   'stylestats': 'build/css/*.css'
 }
@@ -76,7 +76,6 @@ gulp.task('js', function() {
   return gulp.src(source.js)
     .pipe(sourcemaps.init())
     .pipe(plumber({errorHandler: notify.onError("Error: <%= error.message %>")}))
-    // .pipe(uglify({preserveComments: 'some'}))
     .pipe(concat('script.js'))
     .pipe(sourcemaps.write())
     .pipe(gulp.dest(build.js))
@@ -142,7 +141,7 @@ gulp.task('browser-sync', function() {
 gulp.task('watch', function() {
   runSequence(
     ['jade', 'sass', 'js', 'stylestats'],
-    'browser-sync',
+    'browser-sync'
   );
 });
 
