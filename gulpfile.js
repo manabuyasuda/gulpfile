@@ -16,7 +16,7 @@ var runSequence = require('run-sequence');
 var stylestats = require('gulp-stylestats');
 
 /**
- * コンパイル前のソースへのパス。
+ * 処理前のソースへのパス。
  */
 var source = {
   'root': 'source/',
@@ -27,7 +27,7 @@ var source = {
 }
 
 /**
- * コンパイル後に出力するパス。
+ * 処理後に出力するパス。
  */
 var build = {
   'root': 'build/',
@@ -38,7 +38,7 @@ var build = {
 }
 
 /**
- * jadeをhtmlにコンパイルします。
+ * `.jade`を`.html`にコンパイルします。
  */
 gulp.task('jade', function() {
   return gulp.src([source.jade + '*.jade', '!' + source.jade + '_*.jade'])
@@ -51,7 +51,9 @@ gulp.task('jade', function() {
 });
 
 /**
- * .scssを.cssに圧縮してコンパイルします。
+ * `.scss`を`.css`にコンパイルします。
+ * 対象は`source/asset/sass/`の中にある`.scss`ファイルです。
+ * ベンダープレフィックスを付与後、csscombで整形されます。
  */
 gulp.task('sass', function(){
   return gulp.src(source.sass)
@@ -69,8 +71,9 @@ gulp.task('sass', function(){
 });
 
 /**
- * source/asset/js内のjsファイルを
- * 圧縮してから結合します。
+ * `.js`を結合します。
+ * 対象は`source/asset/js`の中にある`.js`ファイルです。
+ * ファイル名は`script.js`になります。
  */
 gulp.task('js', function() {
   return gulp.src(source.js)
@@ -83,7 +86,9 @@ gulp.task('js', function() {
 });
 
 /**
- * cssを圧縮します。
+ * `.css`を圧縮します。
+ * 対象は'build/css/'に出力された`.css`ファイルです。
+ * ファイル名は`ファイル名.min.css`になります。
  */
  gulp.task('minify-css', function() {
   return gulp.src(build.css + '*.css')
@@ -96,6 +101,8 @@ gulp.task('js', function() {
 
  /**
  * jsを圧縮します。
+ * 対象は'build/js/'に出力された`.js`ファイルです。
+ * ファイル名は'script.min.js'になります。
  */
  gulp.task('minify-js', function() {
   return gulp.src(build.js + '*.js')
@@ -107,8 +114,10 @@ gulp.task('js', function() {
 });
 
 /**
- * stylestatsでCSSをチェックします。
+ * stylestatsでCSSを解析します。
+ * 対象は'build/css/'に出力された`.css`ファイルです。
  * css/stylestats/ ディレクトリに.jsonとして出力されます。
+ * https://github.com/t32k/stylestats
  */
 gulp.task('stylestats', function() {
   return gulp.src(source.stylestats)
@@ -120,7 +129,7 @@ gulp.task('stylestats', function() {
 });
 
 /**
- * ローカルサーバーの起動後、各ファイルの監視をします。
+ * ローカルサーバーの起動後、各ファイルを監視します。
  */
 gulp.task('browser-sync', function() {
   browserSync({
@@ -136,9 +145,10 @@ gulp.task('browser-sync', function() {
 
 
 /**
- * jade, sass, jsのタスクを処理しながらライブリロード。
+ * 開発中に使用するタスクです。
+ * jade, sass, js, stylestatsのタスクを処理しながらライブリロードします。
  */
-gulp.task('watch', function() {
+gulp.task('default', function() {
   runSequence(
     ['jade', 'sass', 'js', 'stylestats'],
     'browser-sync'
@@ -146,7 +156,8 @@ gulp.task('watch', function() {
 });
 
  /**
- * cssとjsを圧縮する
+ * `.css`と`.js`を圧縮します。
+ * minify-cssとminify-jsのタスクを参照してくだい。
  */
 gulp.task('minify', function() {
   runSequence(
