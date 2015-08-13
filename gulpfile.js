@@ -116,7 +116,7 @@ gulp.task('js', function() {
 /**
  * stylestatsでCSSを解析します。
  * 対象は'build/css/'に出力された`.css`ファイルです。
- * css/stylestats/ ディレクトリに.jsonとして出力されます。
+ * `css/stylestats/`ディレクトリに`.json`として出力されます。
  * https://github.com/t32k/stylestats
  */
 gulp.task('stylestats', function() {
