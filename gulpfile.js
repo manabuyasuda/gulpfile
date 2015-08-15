@@ -129,14 +129,21 @@ gulp.task('stylestats', function() {
 });
 
 /**
- * ローカルサーバーの起動後、各ファイルを監視します。
+ * ローカルサーバーを起動します。
+ * ディレクトリは'build/'を指定しています。
  */
 gulp.task('browser-sync', function() {
   browserSync({
     server: {
       baseDir: build.root
     }
-  })
+  });
+});
+
+/**
+ * watchタスクを指定します。
+ */
+gulp.task('watch', function() {
   gulp.watch(source.jade + '*.jade', ['jade']);
   gulp.watch(source.sass, ['sass']);
   gulp.watch(source.js, ['js']);
@@ -148,9 +155,9 @@ gulp.task('browser-sync', function() {
  * 開発中に使用するタスクです。
  * jade, sass, js, stylestatsのタスクを処理しながらライブリロードします。
  */
-gulp.task('default', function() {
+gulp.task('default', ['jade', 'sass', 'stylestats', 'js'], function() {
   runSequence(
-    ['jade', 'sass', 'js', 'stylestats'],
+    'watch',
     'browser-sync'
   );
 });
